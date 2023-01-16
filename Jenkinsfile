@@ -10,14 +10,22 @@ pipeline {
         }
         stage('Docker Image Build') {
             steps {
-                sh 'docker stop myapp & docker rm -f myapp & docker image rm -f myapp & docker build -t myapp .'
+                sh 'docker stop kiran & docker rm -f kiran & docker image rm -f kiran & docker build -t kiran .'
             }
         }
         stage('Docker Container Run') {
             steps {
-                sh 'docker run -d --name myapp -p 80:80 myapp'
-                sh 'docker tag myapp raam043/myapp:latest'
+                sh 'docker run -d --name kiran -p 80:80 kiran'
+                sh 'docker tag kiran raam043/kiran:latest'
             }
+        }
+        stage('Docker Push to DockerHub') {
+            steps {
+                withCredentials([string(credentialsId: 'DH', variable: 'DH')]) {
+                    sh 'docker login -u raam043 -p ${DH}'
+                    sh 'docker push raam043/kiran:latest'
+            }
+        }
         }
     }
 }
